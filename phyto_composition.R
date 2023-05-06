@@ -672,12 +672,18 @@ annotate_figure(rel_m2_start_end,
 genus_m1 <- read.csv("D:/UPPSALA/Master_thesis/Results/PC_countings/Data_MI/raw-vis_Mi1.csv",
                      sep = ";")
 genus_m2 <- read.csv("D:/UPPSALA/Master_thesis/Results/PC_countings/Data_MI/raw-vis_Mi2.csv",
-                     sep = ";")
+                     sep = ",")
 genus_m1_abs <- genus_m1[,1:37]
 genus_m1_rel <- cbind(genus_m1[,1:3],genus_m1[,40:67])
 genus_m1_abs[,38] <- paste(genus_m1_abs$Treatment,genus_m1_abs$Origin)
 genus_m1_rel[,32] <- paste(genus_m1_rel$Treatment,genus_m1_rel$Origin)
-
+x <- c("#FD0D1C","#32FE0D","#261CFD","#FACBCD","#FC00DD","#00F9FC",
+       "#F5E700","#EB7F00","#224780","#2E8032","#FC6092","#EAA0FB",
+       "#CB00FF","#0DA5FF","#937800","#FD0D86","#1CFDAD","#C0D8FF",
+       "#683B49","#B3F472","#C2EDCD","#AC0D00","#7522B3",
+       "#168987","#FB9092","#A70094","#FF8ECD","#F6B935","#E5E596",
+       "#EB26A5","#812A00","#797D60","#00BBE5","#9B7DA9","#9D98F0",
+       "#FA5600","#E65FF1","#00BB0D","#0DCBAA","#F6B68B")
 #abs####
 genus_em1 <- as.data.frame(split(genus_m1_abs,genus_m1_abs$Timepoint)[1])
 genus_sm1 <- as.data.frame(split(genus_m1_abs,genus_m1_abs$Timepoint)[2])
@@ -819,6 +825,34 @@ re1_genus <- ggbarplot(rgenus_em1_plot,
   theme(legend.title = element_text(size = 8),
         legend.text = element_text(size = 8))
 ggarrange(rs1_genus,re1_genus,
+          common.legend = T)
+rs1_genus_new <- ggbarplot(rgenus_sm1_plot,
+                       x="Treatment",
+                       y="Abun",
+                       color = "species",
+                       title = "Start community rMi1",
+                       combine = TRUE,
+                       add = "mean",
+                       fill = "species",
+                       legend.title="Genus",
+                       palette = x)+
+  ylab("Relative cell abundace / ml")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+re1_genus_new <- ggbarplot(rgenus_em1_plot,
+                       x="Treatment",
+                       y="Abun",
+                       color = "species", 
+                       title = "End community rMi1",
+                       combine = TRUE,
+                       add = "mean",
+                       fill = "species",
+                       legend.title="Genus",
+                       palette = x)+
+  ylab("Relative cell abundace / ml")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+ggarrange(rs1_genus_new,re1_genus_new,
           common.legend = T)
 #M2####
 genus_m2_abs <- genus_m2[,1:48]
@@ -1177,7 +1211,7 @@ e1_genus_o <- ggbarplot(genus_em1_plot,
         legend.text = element_text(size = 8))
 ggarrange(s1_genus_o,e1_genus_o,
           common.legend = T)
-#combined####
+#M1 combined####
 #abs####
 genus_sm1_plot$V38 <- factor(genus_sm1_plot$V38,
                         levels = c("Add C","Con C","Add D","Con D","Add E","Con E"))
@@ -1236,6 +1270,42 @@ ggarrange(s1_genus_i,e1_genus_i,
 annotate_figure(ggarrange(s1_genus_i,e1_genus_i,
                           common.legend = T),
                 top = text_grob("Microcosm 1 - Phytoplankton abundance",face = "bold"))
+s1_genus_i_new <- ggbarplot(genus_sm1_plot,
+                        x="V38",
+                        y="Abun",
+                        color = "species",
+                        title = "Day 0",
+                        combine = TRUE,
+                        add = "mean",
+                        fill = "species",
+                        legend.title="Genus",
+                        palette = as.vector(x))+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+genus_em1_plot$V38<-as.factor(genus_em1_plot$V38,
+                              levels=c("Add C","Con C","Add D","Con D","Add E","Con E"))
+e1_genus_i_new <- ggbarplot(genus_em1_plot,
+                        x="V38",
+                        y="Abun",
+                        color = "species", 
+                        title = "Day 8",
+                        combine = TRUE,
+                        add = "mean",
+                        fill = "species",
+                        legend.title="Genus",
+                        palette = as.vector(x))+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+ggarrange(s1_genus_i_new,e1_genus_i_new,
+          common.legend = T)
+annotate_figure(ggarrange(s1_genus_i_new,e1_genus_i_new,
+                          common.legend = T),
+                top = text_grob("Microcosm 1 - Phytoplankton abundance",face = "bold"))
+
 #relative####
 rgenus_sm1_plot$V32<-as.factor(rgenus_sm1_plot$V32,
                                levels=c("Add C", "Con C","Add D","Con D","Add E","Con E"))
@@ -1284,7 +1354,45 @@ re1_genus_i <- ggbarplot(rgenus_em1_plot,
 annotate_figure(ggarrange(rs1_genus_i,re1_genus_i,
                    common.legend = T),
          top=text_grob("Microcosm 1 - Community composition by Genus", face = "bold"))
+rs1_genus_i_new <- ggbarplot(rgenus_sm1_plot,
+                         x="V32",
+                         y="Abun",
+                         color = "species",
+                         title = "Day 0",
+                         combine = TRUE,
+                         add = "mean",
+                         fill = "species",
+                         legend.title="Genus",
+                         palette = as.vector(x))+
+  ylab("Proportion")+
+  xlab(" ")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+re1_genus_i_new <- ggbarplot(rgenus_em1_plot,
+                         x="V32",
+                         y="Abun",
+                         color = "species", 
+                         title = "Day 8",
+                         combine = TRUE,
+                         add = "mean",
+                         fill = "species",
+                         legend.title="Genus",
+                         palette = as.vector(x))+
+  ylab("Proportion")+
+  xlab(" ")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+annotate_figure(ggarrange(rs1_genus_i_new,re1_genus_i_new,
+                          common.legend = T),
+                top=text_grob("Microcosm 1 - Community composition by Genus", face = "bold"))
 #M2####
+x_m2 <- c("#FD0D1C","#E5E596","#812A00","#32FE0D","#EB26A5",
+          "#FACBCD","#FC00DD","#00F9FC","#6666FF","#F5E700","#EB7F00",
+          "#F6B68B","#00BB0D","#FA5600","#224780","#2E8032","#FC6092",
+          "#EAA0FB","#CB00FF","#0DA5FF","#937800","#0DCBAA","#9B7DA9",
+          "#FD0D86","#1CFDAD","#C0D8FF","#683B49","#B3F472","#C2EDCD",
+          "#9D98F0","#AC0D00","#CCFF33","#7522B3","#168987","#FB9092",
+          "#CCCCCC","#A70094","#FF8ECD","#F6B935")
 s2_genus_i <- ggbarplot(genus_sm2_plot,
                         x="V49",
                         y="Abun",
@@ -1385,5 +1493,35 @@ re2_genus_i <- ggbarplot(rgenus_em2_plot,
 annotate_figure(ggarrange(rs2_genus_i,re2_genus_i,
           common.legend = T),
           top = text_grob("Microcosm 2 - Community composition by Genus",face = "bold"))
-
+rs2_genus_i_new <- ggbarplot(rgenus_sm2_plot,
+                         x="V49",
+                         y="Abun",
+                         color = "species",
+                         title = "Day 0",
+                         combine = TRUE,
+                         add = "mean",
+                         fill = "species",
+                         legend.title="Genus",
+                         palette = as.vector(x_m2))+
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+re2_genus_i_new <- ggbarplot(rgenus_em2_plot,
+                         x="V49",
+                         y="Abun",
+                         color = "species", 
+                         title = "Day 8",
+                         combine = TRUE,
+                         add = "mean",
+                         fill = "species",
+                         legend.title="Genus",
+                         palette = as.vector(x_m2))+
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+annotate_figure(ggarrange(rs2_genus_i_new,re2_genus_i_new,
+                          common.legend = T),
+                top = text_grob("Microcosm 2 - Community composition by Genus",face = "bold"))
 
