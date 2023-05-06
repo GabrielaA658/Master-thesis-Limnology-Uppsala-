@@ -8,7 +8,6 @@ library(gplots)
 library(reshape2)
 library(ggplot2)
 
-
 msc <- read.csv("visualisation_400_countings.csv")
 grouped_data <- msc[,47:73]
 abs_abun <- grouped_data[,1:13]
@@ -33,6 +32,47 @@ abs_abun_09 <- as.data.frame(abs_abun_list[4])
 names(abs_abun_09) <- c("Mesocosm","Treatment","Replicate","Sample","Cyanobacteria","Chlorophyta",
                         "Ciliophora","Cryptophyta","Heterokontophyta","Bacillariophyta","Heliozoa",
                         "Euglenozoa","Streptophyta","Int")
+
+#alpha diversity####
+ggbarplot(data=msc,x="Mesocosm",y="No_species",
+          legend.position="right",
+          fill = "Treatment",
+          main="Number of species")
+diversity_msc <- as.data.frame(cbind(msc$Sample,msc$Mesocosm,msc$Treatment,msc$No_species))
+names(diversity_msc) <- c("Experimental_day","Mesocosm","Treatment","No_species")
+list_diversity <- split(diversity_msc,diversity_msc$Experimental_day)
+diversity_01 <- as.data.frame(list_diversity[1])
+names(diversity_01) <- names(diversity_msc)
+diversity_13 <- as.data.frame(list_diversity[2])
+names(diversity_13) <- names(diversity_msc)
+diversity_21 <- as.data.frame(list_diversity[3])
+names(diversity_21) <- names(diversity_msc)
+diversity_38 <- as.data.frame(list_diversity[4])
+names(diversity_38) <- names(diversity_msc)
+
+annotate_figure(
+ggarrange(ggbarplot(data = diversity_01, x="Mesocosm",
+          y="No_species",
+          fill = "Treatment",
+          title = "d01")+
+  scale_fill_manual(values = c("#000033","#339933","#CC3333","#3399CC")),
+ggbarplot(data = diversity_13, x="Mesocosm",
+          y="No_species",
+          fill = "Treatment",
+          title = "d13")+
+  scale_fill_manual(values = c("#000033","#339933","#CC3333","#3399CC")),
+ggbarplot(data = diversity_21, x="Mesocosm",
+          y="No_species",
+          fill = "Treatment",
+          title = "d21")+
+  scale_fill_manual(values = c("#000033","#339933","#CC3333","#3399CC")),
+ggbarplot(data = diversity_38, x="Mesocosm",
+          y="No_species",
+          fill = "Treatment",
+          title = "d38")+
+  scale_fill_manual(values = c("#000033","#339933","#CC3333","#3399CC")),
+common.legend = T,nrow = 2,ncol = 2),top = text_grob("Number of coexisting species",face = "bold"))
+
 #permanova####
 set.seed(5)
 adonis2(abs_abun[,5:13]~abs_abun$Treatment,
@@ -651,6 +691,9 @@ genus_msc_9 <- gather(raw_9,
                        species,
                        Abun,
                       Ochromonas:Stauridium)
+library(Polychrome)
+P50<-createPalette(50,  c("#ff0000", "#00ff00", "#0000ff"))
+swatch(P50)
 raw00<- ggbarplot(genus_msc_0,
                  x="Treatment",
                  y="Abun",
@@ -674,6 +717,20 @@ raw00<- ggbarplot(genus_msc_0,
   xlab("")+
 theme(legend.title = element_text(size = 8),
       legend.text = element_text(size = 8))
+raw0_new <- ggbarplot(genus_msc_0,
+          x="Treatment",
+          y="Abun",
+          color = "species",
+          title = "Day 1",
+          combine = TRUE,
+          add = "mean",
+          palette = as.vector(P50),
+          fill="species",
+          legend.title="Genus")+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
 raw9 <- ggbarplot(genus_msc_9,
                   x="Treatment",
                   y="Abun",
@@ -697,6 +754,21 @@ raw9 <- ggbarplot(genus_msc_9,
   xlab("")+
   theme(legend.title = element_text(size = 8),
         legend.text = element_text(size = 8))
+raw9_new <- ggbarplot(genus_msc_9,
+                  x="Treatment",
+                  y="Abun",
+                  color = "species",
+                  title = "Day 38",
+                  combine = TRUE,
+                  add = "mean",
+                  fill = "species",
+                  legend.title="Genus",
+                  palette = as.vector(P50))+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+
 raw3 <- ggbarplot(genus_msc_3,
                   x="Treatment",
                   y="Abun",
@@ -720,6 +792,21 @@ raw3 <- ggbarplot(genus_msc_3,
   xlab("")+
   theme(legend.title = element_text(size = 8),
         legend.text = element_text(size = 8))
+raw3_new <- ggbarplot(genus_msc_3,
+                  x="Treatment",
+                  y="Abun",
+                  color = "species",
+                  title = "Day 13",
+                  combine = TRUE,
+                  add = "mean",
+                  fill = "species",
+                  legend.title="Genus",
+                  palette = as.vector(P50))+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+
 raw5 <- ggbarplot(genus_msc_5,
                   x="Treatment",
                   y="Abun",
@@ -743,6 +830,21 @@ raw5 <- ggbarplot(genus_msc_5,
   xlab("")+
   theme(legend.title = element_text(size = 8),
         legend.text = element_text(size = 8))
+raw5_new <- ggbarplot(genus_msc_5,
+                  x="Treatment",
+                  y="Abun",
+                  color = "species",
+                  title = "Day 21",
+                  combine = TRUE,
+                  add = "mean",
+                  fill = "species",
+                  legend.title="Genus",
+                  palette = as.vector(P50))+
+  ylab("Cells/ml")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+
 plot_general_genus <- ggarrange(raw00,raw3,raw5,raw9,
                             common.legend = T,
                             ncol = 2,
@@ -752,6 +854,16 @@ annotate_figure(plot_general_genus,
                 top = text_grob("Mesocosm Treatment Community Composition by Genus",
                                 face = "bold"),
                 bottom = "Treatment")
+plot_general_genus_new <- ggarrange(raw0_new,raw3_new,raw5_new,raw9_new,
+                                common.legend = T,
+                                ncol = 2,
+                                nrow = 2,
+                                labels = c("A","B","C","D"))
+annotate_figure(plot_general_genus_new,
+                top = text_grob("Mesocosm Treatment Community Composition by Genus",
+                                face = "bold"),
+                bottom = "Treatment")
+
 #contributing species
 set.seed(4)
 permanova_5_genus <- adonis(raw_5[,4:43]~raw_5$Treatment,
@@ -778,6 +890,14 @@ names(raw_r5) <- names(msc_relative)
 raw_r9 <- as.data.frame(raw_rel_list[4])
 names(raw_r9) <- names(msc_relative)
 
+x_msc <- c("#FD0D1C","#812A00","#6699CC","#EB26A5","#FC00DD",
+           "#00F9FC","#6666FF","#F5E700","#EB7F00","#F6B68B",
+           "#00BB0D","#FA5600","#224780","#2E8032","#FC6092",
+           "#9B7DA9","#CB00FF","#797D60","#0DA5FF","#CC9999",
+           "#0DCBAA","#E65FF1","#9B7DA9","#FD0D86","#1CFDAD",
+           "#C0D8FF","#683B49","#B3F472","#C2EDCD","#9D98F0",
+           "#00BBE5","#FF9900","#7522B3","#168987","#FF6600",
+           "#CCCCCC","#A70094","#FFFF00","#FF8ECD","#F6B935")
 genus_msc_r0 <- gather(raw_r0,
                       species,
                       Abun,
@@ -896,6 +1016,73 @@ annotate_figure(rplot_general_genus,
                 top = text_grob("Mesocosm Treatment Community Composition by Genus",
                                 face = "bold"),
                 bottom = "Treatment")
+raw00r_new<- ggbarplot(genus_msc_r0,
+                   x="Treatment",
+                   y="Abun",
+                   color = "species",
+                   title = "Day 1",
+                   combine = TRUE,
+                   add = "mean",
+                   fill = "species",
+                   legend.title="Genus",
+                   palette = as.vector(x_msc))+
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+raw9r_new <- ggbarplot(genus_msc_r9,
+                   x="Treatment",
+                   y="Abun",
+                   color = "species",
+                   title = "Day 38",
+                   combine = TRUE,
+                   add = "mean",
+                   fill = "species",
+                   legend.title="Genus",
+                   palette = as.vector(x_msc))+
+  
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+raw3r_new <- ggbarplot(genus_msc_r3,
+                   x="Treatment",
+                   y="Abun",
+                   color = "species",
+                   title = "Day 13",
+                   combine = TRUE,
+                   add = "mean",
+                   fill = "species",
+                   legend.title="Genus",
+                   palette = as.vector(x_msc))+
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+raw5r_new <- ggbarplot(genus_msc_r5,
+                   x="Treatment",
+                   y="Abun",
+                   color = "species",
+                   title = "Day 21",
+                   combine = TRUE,
+                   add = "mean",
+                   fill = "species",
+                   legend.title="Genus",
+                   palette = as.vector(x_msc))+
+  ylab("Proportion")+
+  xlab("")+
+  theme(legend.title = element_text(size = 8),
+        legend.text = element_text(size = 8))
+rplot_general_genus_new <- ggarrange(raw00r_new,raw3r_new,raw5r_new,raw9r_new,
+                                 common.legend = T,
+                                 ncol = 2,
+                                 nrow = 2,
+                                 labels = c("A","B","C","D"))
+annotate_figure(rplot_general_genus_new,
+                top = text_grob("Mesocosm Treatment Community Composition by Genus",
+                                face = "bold"),
+                bottom = "Treatment")
+
 #contributing species
 set.seed(4)
 permanova_5r_genus <- adonis(raw_r5[,4:43]~raw_r5$Treatment,
